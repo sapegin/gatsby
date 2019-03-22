@@ -39,7 +39,7 @@ function generateIcons(icons, srcIcon) {
   })
 }
 
-exports.onPostBootstrap = async (args, pluginOptions) => {
+exports.onPostBootstrap = async ({ reporter }, pluginOptions) => {
   const { icon, ...manifest } = pluginOptions
 
   // Delete options we won't pass to the manifest.webmanifest.
@@ -48,6 +48,10 @@ exports.onPostBootstrap = async (args, pluginOptions) => {
   delete manifest.theme_color_in_head
   delete manifest.cache_busting_mode
   delete manifest.crossOrigin
+
+  let activity = reporter.activityTimer(`Build manifest and related icons`)
+
+  activity.start()
 
   // If icons are not manually defined, use the default icon set.
   if (!manifest.icons) {
@@ -99,4 +103,6 @@ exports.onPostBootstrap = async (args, pluginOptions) => {
     path.join(`public`, `manifest.webmanifest`),
     JSON.stringify(manifest)
   )
+
+  activity.end()
 }
